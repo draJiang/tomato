@@ -27,6 +27,7 @@
     "react-dom": "^17.0.1",
     "react-markdown": "^8.0.6",
     "remark-breaks": "^3.0.2",
+    "styled-components": "^5.3.0",
     "unsplash-js": "^7.0.15"
   },
   "devDependencies": {
@@ -35,6 +36,7 @@
     "@types/langs": "^2.0.1",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "@types/styled-components": "^5.1.27",
     "@types/tailwindcss": "^3.1.0",
     "@types/webextension-polyfill": "^0.10.0",
     "autoprefixer": "^10.4.14",

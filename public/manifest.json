@@ -1,10 +1,10 @@
 {
     "manifest_version": 3,
-    "name": "Hello",
-    "description": "Bridging the gap between theory and practice.",
-    "version": "0.0.1",
+    "name": "Tomato Bank",
+    "description": "Manage your time with Tomato Bank",
+    "version": "0.0.3",
     "action": {
-        "default_icon": "icon48.png",
+        "default_icon": "icon128.png",
         "default_popup": "popup.html"
     },
     "content_scripts": [{
@@ -16,6 +16,7 @@
             "js/content_script.js"
         ]
     }],
+    "options_page": "options.html",
     "background": {
         "service_worker": "js/background.js"
     },
@@ -26,8 +27,7 @@
     },
     "permissions": [
         "storage",
-        "contextMenus",
-        "scripting"
+        "activeTab"
     ],
     "host_permissions": [
         "<all_urls>"
