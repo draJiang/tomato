@@ -126,6 +126,9 @@ function handleMessage(request: any, sender: any, sendResponse: any) {
 
         })
 
+        // 显示进度条
+        showMask(false)
+
 
 
     }

@@ -224,7 +224,7 @@ export const Options = () => {
                           }
 
                         >
-                          <Input placeholder="https://example.com/" />
+                          <Input placeholder="example.com/" />
                         </Form.Item>
                         <Form.Item
                           style={{ marginBottom: '0' }}

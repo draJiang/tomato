@@ -4,8 +4,11 @@ import React, { useEffect, useState, useRef, useContext } from "react";
 
 import { showMaskType } from '../types'
 import { WebsiteType, TomatoTime, Status } from '../enum';
-import { Button, ConfigProvider, Divider, notification } from 'antd';
+import { Button, ConfigProvider, Divider, message } from 'antd';
 import { theme } from '../theme'
+
+import confetti from 'canvas-confetti';
+
 
 export function Mask(props: any) {
 
@@ -52,16 +55,17 @@ export function Mask(props: any) {
             // 增加了 1 个番茄
             if (request.type === "completeTomato") {
 
-                notification.success({
-                    message: 'Congratulations',
-                    description: 'You just completed a tomato timer',
-                    icon: <span style={{ position: 'absolute', top: '12px' }}>🍅</span>,
-                    duration: 5,
-                    style: { border: '1px solid ' + theme.token.colorPrimary },
-                    onClick: () => {
-                        // console.log('Notification Clicked!');
-                    },
+                confetti({
+                    particleCount: 140,
+                    spread: 170,
+                    origin: { y: 0.4 }
                 });
+
+                message.success({
+                    content: 'You just completed a tomato timer',
+                    icon: <span style={{ marginRight: '4px' }}>🍅</span>,
+                    duration: 4,
+                })
 
 
             }

@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "antd": "^5.3.2",
+    "canvas-confetti": "^1.6.0",
     "eventsource-parser": "^0.1.0",
     "franc": "^6.1.0",
     "langs": "^2.0.0",
@@ -31,6 +32,7 @@
     "unsplash-js": "^7.0.15"
   },
   "devDependencies": {
+    "@types/canvas-confetti": "^1.6.1",
     "@types/chrome": "0.0.158",
     "@types/jest": "^27.0.2",
     "@types/langs": "^2.0.1",

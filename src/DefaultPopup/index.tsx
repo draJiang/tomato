@@ -317,7 +317,7 @@ function BottomBox(props: InfoProps) {
                 flex: '1',
                 color: 'rgba(0, 0, 0, 0.9)'
             }}>🍅✖️{props?.tomato.balance}</div>
-            <Button onClick={() => { window.open('chrome-extension://dikipeajjpbefbmlhmpeadimifdodnpi/options.html') }} type="text" icon={<SettingOutlined />} />
+            <Button onClick={() => { browser.runtime.openOptionsPage()}} type="text" icon={<SettingOutlined />} />
         </div>
     )
 
