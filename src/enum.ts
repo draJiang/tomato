@@ -11,6 +11,6 @@ export enum WebsiteType {
 }
 
 export enum TomatoTime {
-    Earn = 0.2 * 60 * 1000,
+    Earn = 0.3 * 60 * 1000,
     Spend = 25 * 60 * 1000,
 }

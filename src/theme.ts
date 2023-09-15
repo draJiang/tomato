@@ -8,6 +8,6 @@ export const theme = {
     },
     color: {
         colorSecond: '#A2C975',
-        colorYellow: '#F8E4A7'
+        colorYellow: '#F8D772'
     }
 }

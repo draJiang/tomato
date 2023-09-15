@@ -17,21 +17,12 @@ browser.runtime.onInstalled.addListener(function () {
 });
 
 
-
-
-// enum Status {
-//     Standby = 'Standby',
-//     Earn = 'Earn',
-//     Spend = 'Spend'
-// }
+// 记录番茄状态
 let status: Status = Status.Standby;
-
 // 当前标签的 URL
 let thisUrl: string | undefined
 // 当前标签的 ID
 let activeTab: number | undefined | null;
-// 最后一次更新的时间
-let lastActivityTime: number;
 
 let earnTime: number = 0;
 let spendTime: number = 0;
@@ -106,14 +97,15 @@ function handleMessage(request: any, sender: any, sendResponse: any) {
 
     if (request.type === 'spendTomatos') {
         // 停止赚钱计时
-        stopTomato()
+        if (status === Status.Earn) {
+            stopTomato()
+        }
 
         browser.storage.local.get({ 'spendTime': 0 }).then((data: any) => {
 
             spendTime = data.spendTime
 
-            // 记录当前状态
-            status = Status.Spend
+
 
             // 开始计时
             spendzTomato = setInterval(async () => {
@@ -125,7 +117,8 @@ function handleMessage(request: any, sender: any, sendResponse: any) {
 
 
         })
-
+        // 记录当前状态
+        status = Status.Spend
         // 显示进度条
         showMask(false)
 
@@ -133,41 +126,24 @@ function handleMessage(request: any, sender: any, sendResponse: any) {
 
     }
 
-    // if (request.type === 'getStatus') {
-
-    //     const websiteType = checkWebsite(thisUrl!).type
-    //     const response = {
-    //         'type': 'updateStatus', 'data':
-    //         {
-    //             'websiteType': websiteType,
-    //             'status': status,
-    //             'timeSpent': status === 'Spend' ? spendTime : earnTime
-    //         }
-
-    //     }
-    //     sendResponse(response);
-
-    //     return true; // Important: this keeps sendResponse alive for async operation
-
-    // }
-
 
 }
 
 let portToPopup: any
-let portTocontent: any
+// let portTocontent: any
 
+// 长连接
 browser.runtime.onConnect.addListener(port => {
 
     console.log('连接中------------')
 
     if (port.name === 'fromContentScript') {
 
-        portTocontent = port
+        // portTocontent = port
         // port.postMessage('hello I am bakcground')
 
         // 检查是否要禁用网页
-        slover()
+        // slover()
 
     } else {
         portToPopup = port
@@ -255,7 +231,6 @@ browser.tabs.onActivated.addListener(function (activeInfo) {
 
     // updateTabTimeSpent();
 
-    lastActivityTime = Date.now();
     console.log(activeInfo);
     activeTab = activeInfo.tabId
 
@@ -263,6 +238,7 @@ browser.tabs.onActivated.addListener(function (activeInfo) {
 
 });
 
+// 根据当前番茄状态和网站类型处理核心逻辑（限制访问或者累积番茄等）
 function slover() {
 
     browser.tabs.query({ active: true, currentWindow: true }).then(async (tabs) => {
@@ -271,9 +247,12 @@ function slover() {
         if (tabs[0]) {
 
             activeTab = tabs[0].id;
-            thisUrl = tabs[0].url
-            console.log(thisUrl);
-
+            
+            if ('url' in tabs[0]) {
+                thisUrl = tabs[0].url
+            }else{
+                thisUrl = tabs[0].pendingUrl
+            }
 
 
             //  根据网站状态处理计时逻辑
@@ -303,6 +282,8 @@ function slover() {
                             browser.storage.local.set({ 'spendTime': spendTime })
                             // 停止计时
                             stopTomato()
+                            // 默认状态
+                            status = Status.Standby
                             break
                         default:
                             break;
@@ -318,10 +299,6 @@ function slover() {
 
                         case Status.Standby:
                             // 禁止浏览网页
-                            // if (portTocontent) {
-                            //     portTocontent.postMessage({ 'type': 'showMask', 'status': status, 'showMask': true })
-                            // }
-
                             showMask(true)
 
                             break;
@@ -330,11 +307,6 @@ function slover() {
                             // 当前正在累积番茄
                             // 显示提示
                             showMask(true)
-                            // stopTomato()
-
-                            // if (portTocontent) {
-                            //     portTocontent.postMessage({ 'type': 'showMask', 'status': status, 'showMask': true })
-                            // }
                             break;
 
                         case Status.Spend:
@@ -372,6 +344,8 @@ function slover() {
                             browser.storage.local.set({ 'spendTime': spendTime })
                             // 停止计时
                             stopTomato()
+                            // 恢复默认状态
+                            status = Status.Standby
 
                             break;
 
@@ -404,6 +378,7 @@ function slover() {
 //     }
 // });
 
+// 更新倒计时
 async function updateTabTimeSpent(currentTimeSpent: number) {
 
     if (activeTab) {
@@ -422,7 +397,6 @@ async function updateTabTimeSpent(currentTimeSpent: number) {
 
 
             //更新番茄余额、总额
-
             if (status === 'Spend') {
                 updateTomato(-1)
 
@@ -430,6 +404,9 @@ async function updateTabTimeSpent(currentTimeSpent: number) {
                 setTimeout(() => {
                     showMask(true)
                 }, 400);
+
+                //重置消费番茄倒计时
+                browser.storage.local.set({ 'spendTime': 0 })
 
 
 
@@ -444,7 +421,8 @@ async function updateTabTimeSpent(currentTimeSpent: number) {
                 });
 
             }
-            browser.storage.local.set({ 'spendTime': 0 })
+
+            
             //停止番茄计时
             stopTomato()
 
@@ -527,8 +505,6 @@ async function updateTabTimeSpent(currentTimeSpent: number) {
         }
 
 
-        lastActivityTime = Date.now();
-
         return newCurrentTimeSpent
     }
 
@@ -550,7 +526,7 @@ function stopTomato() {
 
     }
 
-    status = Status.Standby //默认状态
+    // status = Status.Standby //默认状态
     browser.action.setBadgeText({ text: '' })
 
     if (activeTab) {

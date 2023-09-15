@@ -172,7 +172,7 @@ export function Mask(props: any) {
                                             flexDirection: "column",
                                             alignItems: "center"
                                         }}>
-                                            <h1 style={{ marginBottom: '10px' }}>🔒</h1>
+                                            <h1 style={{ marginTop: '0px' }}>🔒</h1>
                                             <Button
                                                 style={{
                                                     marginBottom: '1em',
@@ -203,7 +203,9 @@ export function Mask(props: any) {
                                             flexDirection: "column",
                                             alignItems: "center"
                                         }}>
-                                            <h1 style={{ marginBottom: '10px' }}>🍅</h1>
+                                            <h1 style={{
+                                                marginTop: '0px'
+                                            }}>🍅</h1>
 
                                             <Button
                                                 style={{

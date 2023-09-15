@@ -19,7 +19,8 @@ export const checkWebsite = async (thisUrl: string) => {
     // 根据当前网页的 URL 控制 Popup 的状态
     for (let i = 0; i < websites.length; i++) {
         if (thisUrl) {
-            if (thisUrl.indexOf(websites[i].url) >= 0) {
+            const url = websites[i].url.replace(/http:\/\//g, "").replace(/https:\/\//g, "").replace(/www./g, "");
+            if (thisUrl.indexOf(url) >= 0) {
 
                 if (websites[i].type === WebsiteType.White) {
                     websiteType = WebsiteType.White

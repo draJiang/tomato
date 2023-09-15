@@ -128,7 +128,7 @@ export function PopupCard(props: any) {
 
 
   return (
-    <div id="LearningEnglish2023" ref={windowElement}>
+    <div id="" ref={windowElement}>
 
       <Nav onMouseDown={handleMouseDown} />
       <div
