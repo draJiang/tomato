@@ -7,7 +7,9 @@ import { tomatosType } from '../types'
 import { Status, WebsiteType, TomatoTime } from '../enum'
 
 import { millisecondsToTime } from '../utils'
-import { SettingOutlined } from '@ant-design/icons';
+import { SettingOutlined, BulbOutlined, LockOutlined } from '@ant-design/icons';
+import { LockClosedIcon } from '@radix-ui/react-icons'
+
 import { Button, ConfigProvider } from 'antd';
 
 import { theme } from '../theme'
@@ -63,7 +65,7 @@ const TopBox = styled.div`
 
 const TomatoButton = styled(Button)`
 
-    width:200px;
+    min-width:200px;
     margin-top: 14px;
 
 `
@@ -76,6 +78,7 @@ const MainInfo = styled.h1`
     color: rgba(0, 0, 0, 0.90);
     min-width: 200px;
     text-align: center;
+
 
 `
 
@@ -94,7 +97,7 @@ export const DefaultPopup = () => {
         port.onMessage.addListener((msg) => {
 
             if (msg.type === "Initialization") {
-                
+
                 const remainingTime = TomatoTime.Earn - msg.data.timeSpent
                 const timeFormat = millisecondsToTime(remainingTime)
 
@@ -109,7 +112,7 @@ export const DefaultPopup = () => {
 
             if (msg.type === "updateStatus") {
 
-                
+
                 const remainingTime = TomatoTime.Earn - msg.data.timeSpent
                 const timeFormat = millisecondsToTime(remainingTime)
 
@@ -123,7 +126,7 @@ export const DefaultPopup = () => {
             if (msg.type === "updateTomatos") {
 
                 setInfo((prevInfo: any) => {
-                    return { ...prevInfo, tomato: msg.data.tomato }
+                    return { ...prevInfo, tomato: msg.data.tomato, status: msg.data.status }
                 })
 
             }
@@ -279,7 +282,7 @@ function Standby(props: InfoProps) {
             {
                 props?.websiteType === WebsiteType.Black &&
                 <TopBox>
-                    <MainInfo>🔒</MainInfo>
+                    <MainInfo><LockClosedIcon style={{ opacity: '0.8', width: '24px', height: '24px' }} /></MainInfo>
                     <div>
                         <Description>Blacklisted website, unable to accumulate 🍅</Description>
                     </div>
@@ -289,9 +292,11 @@ function Standby(props: InfoProps) {
             {
                 props?.websiteType === WebsiteType.Other &&
                 <TopBox>
-                    <MainInfo>🍅</MainInfo>
+                    <MainInfo>25:00</MainInfo>
                     <div>
-                        <Description>Accumulate 🍅 on whitelisted websites.</Description>
+                        <TomatoButton disabled={true} type='primary' onClick={() => {
+
+                        }}>Enable in the whitelist websites</TomatoButton>
                     </div>
                 </TopBox>
             }
@@ -317,7 +322,7 @@ function BottomBox(props: InfoProps) {
                 flex: '1',
                 color: 'rgba(0, 0, 0, 0.9)'
             }}>🍅✖️{props?.tomato.balance}</div>
-            <Button onClick={() => { browser.runtime.openOptionsPage()}} type="text" icon={<SettingOutlined />} />
+            <Button onClick={() => { browser.runtime.openOptionsPage() }} type="text" icon={<SettingOutlined />} />
         </div>
     )
 

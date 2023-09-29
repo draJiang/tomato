@@ -7,6 +7,9 @@ import { WebsiteType, TomatoTime, Status } from '../enum';
 import { Button, ConfigProvider, Divider, message } from 'antd';
 import { theme } from '../theme'
 
+// import { LockOutlined } from '@ant-design/icons';
+import { LockClosedIcon } from '@radix-ui/react-icons'
+
 import confetti from 'canvas-confetti';
 
 
@@ -34,7 +37,6 @@ export function Mask(props: any) {
 
     useEffect(() => {
 
-        console.log('useEffect:');
 
 
         browser.runtime.sendMessage({
@@ -72,8 +74,6 @@ export function Mask(props: any) {
 
             // 更新时间进度
             if (request.type === "updateTomato") {
-                console.log(request);
-                console.log(status);
 
                 setRemainingTime(request.data.remainingTime)
 
@@ -133,6 +133,7 @@ export function Mask(props: any) {
                 theme={theme}
             >
                 <div id="" ref={windowElement} style={{
+                    fontFamily: 'inherit',
                     fontSize: '14px'
                 }}>
 
@@ -172,7 +173,7 @@ export function Mask(props: any) {
                                             flexDirection: "column",
                                             alignItems: "center"
                                         }}>
-                                            <h1 style={{ marginTop: '0px' }}>🔒</h1>
+                                            <h1 style={{ marginTop: '0px' }}><LockClosedIcon style={{ opacity: '0.8', width: '24px', height: '24px' }} /></h1>
                                             <Button
                                                 style={{
                                                     marginBottom: '1em',

@@ -61,3 +61,53 @@ export const validate = (key: string) => {
     })
 
 }
+
+export const getNewData = (oldData: { earn: Array<{ date: string, value: number }>, spend: Array<{ date: string, value: number }> }, n: number) => {
+
+    let newData = { ...oldData }
+    const today = new Date().toISOString().split('T')[0];
+
+    //在旧数据中找到今天的日期，在今日的日期上增加/减少番茄
+    if (n > 0) {
+
+        let found = false
+        for (let i = 0; i < newData.earn.length; i++) {
+
+            if (newData.earn[i].date === today) {
+                newData.earn[i].value += n
+                found = true
+                break
+            }
+
+        }
+
+        //没有在旧数据中找到今天的日期，新增今日日期
+        if (!found) {
+            newData.earn.push({ 'date': today, value: n })
+        }
+
+    } else {
+
+        let found = false
+        for (let i = 0; i < newData.spend.length; i++) {
+
+            if (newData.spend[i].date === today) {
+                newData.spend[i].value += Math.abs(n)
+                found = true
+                break
+            }
+
+        }
+
+        //没有在旧数据中找到今天的日期，新增今日日期
+        if (!found) {
+            newData.spend.push({ 'date': today, value: Math.abs(n) })
+        }
+
+    }
+
+
+    return newData
+
+
+}

@@ -9,7 +9,7 @@ import { showMaskType, tomatosType } from '../types'
 import { Status, WebsiteType, TomatoTime } from '../enum'
 
 import { theme } from '../theme'
-import { validate } from './util'
+import { validate, getNewData } from './util'
 
 // 插件安装事件
 browser.runtime.onInstalled.addListener(function () {
@@ -92,7 +92,7 @@ function handleMessage(request: any, sender: any, sendResponse: any) {
     }
 
     if (request.type === 'check') {
-        slover()
+        main()
     }
 
     if (request.type === 'spendTomatos') {
@@ -100,6 +100,11 @@ function handleMessage(request: any, sender: any, sendResponse: any) {
         if (status === Status.Earn) {
             stopTomato()
         }
+
+        // 记录当前状态
+        status = Status.Spend
+        // 显示进度条
+        showMask(false)
 
         browser.storage.local.get({ 'spendTime': 0 }).then((data: any) => {
 
@@ -117,10 +122,7 @@ function handleMessage(request: any, sender: any, sendResponse: any) {
 
 
         })
-        // 记录当前状态
-        status = Status.Spend
-        // 显示进度条
-        showMask(false)
+
 
 
 
@@ -190,8 +192,6 @@ browser.runtime.onConnect.addListener(port => {
 })
 
 
-
-
 // 初始化活动标签的状态
 browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
 
@@ -204,7 +204,7 @@ browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
         thisUrl = tabs[0].url
         console.log(thisUrl);
 
-        slover()
+        main()
     }
 
 
@@ -219,7 +219,7 @@ browser.windows.onFocusChanged.addListener(function (windowId) {
 
     if (windowId !== browser.windows.WINDOW_ID_NONE) {
 
-        slover()
+        main()
 
     }
 });
@@ -234,12 +234,12 @@ browser.tabs.onActivated.addListener(function (activeInfo) {
     console.log(activeInfo);
     activeTab = activeInfo.tabId
 
-    slover()
+    main()
 
 });
 
 // 根据当前番茄状态和网站类型处理核心逻辑（限制访问或者累积番茄等）
-function slover() {
+function main() {
 
     browser.tabs.query({ active: true, currentWindow: true }).then(async (tabs) => {
 
@@ -247,10 +247,10 @@ function slover() {
         if (tabs[0]) {
 
             activeTab = tabs[0].id;
-            
+
             if ('url' in tabs[0]) {
                 thisUrl = tabs[0].url
-            }else{
+            } else {
                 thisUrl = tabs[0].pendingUrl
             }
 
@@ -422,10 +422,11 @@ async function updateTabTimeSpent(currentTimeSpent: number) {
 
             }
 
-            
-            //停止番茄计时
-            stopTomato()
 
+            // 停止番茄计时
+            stopTomato()
+            // 恢复默认状态
+            status = Status.Standby
             newCurrentTimeSpent = 0
 
         }
@@ -479,7 +480,7 @@ async function updateTabTimeSpent(currentTimeSpent: number) {
         if (newCurrentTimeSpent !== 0) {
 
             const remainingTime = TomatoTime.Earn - newCurrentTimeSpent
-            const timeFormat = millisecondsToTime(remainingTime)
+            let timeFormat = millisecondsToTime(remainingTime)
 
             // 更新 content Script
             browser.tabs.sendMessage(activeTab, {
@@ -489,6 +490,11 @@ async function updateTabTimeSpent(currentTimeSpent: number) {
                 }
 
             });
+
+            // Firefox
+            if (navigator.userAgent.indexOf('Firefox') >= 0) {
+                timeFormat = timeFormat.split(':')[0] === '00' ? timeFormat.split(':')[1] : timeFormat.split(':')[0]
+            }
 
             //  更新 Popup
             browser.action.setBadgeText({ text: timeFormat })
@@ -571,27 +577,43 @@ async function showMask(isShow: boolean) {
 // 增加/减少番茄
 async function updateTomato(n: number) {
 
-    let data = await browser.storage.local.get({ "tomato": { 'total': 0, 'balance': 0 } })
+
+    let data = await browser.storage.local.get({ 'tomato': { 'total': 0, 'balance': 0 }, 'data': { 'earn': [], 'spend': [] } })
 
 
+
+    const today = new Date().toISOString().split('T')[0];
 
     if (n > 0) {
-        data.tomato.total = data.tomato.total + 1
+        //赚了番茄，总额+1
+        data.tomato.total = data.tomato.total + n
+        // newData.earn.push({ 'date': today, value: n })
+
+    } else {
+        //消费了番茄
+        // newData.spend.push({ 'date': today, value: Math.abs(n) })
     }
 
-
+    //设置余额
     data.tomato.balance = data.tomato.balance + n
 
-    console.log(data);
+    //处理番茄统计数据
+    const oldData = { ...data.data }
+    const newData = getNewData(oldData, n)
 
-    browser.storage.local.set({ 'tomato': data.tomato })
+    console.log('newData:');
+    console.log(newData);
+    
+
+    //保存金额与数据统计
+    browser.storage.local.set({ 'tomato': data.tomato, 'data': newData })
 
     // 通知 Popup 更新
     if (portToPopup) {
         const response = {
             'type': 'updateTomatos', 'data':
             {
-                'status': status,
+                'status': Status.Standby,
                 'timeSpent': status === 'Spend' ? spendTime : earnTime,
                 'tomato': data.tomato
             }
