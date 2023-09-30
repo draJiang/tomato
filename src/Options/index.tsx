@@ -47,7 +47,7 @@ export const Options = () => {
             tabPosition='left'
             items={[
               {
-                label: `📊Charts`,
+                label: `📊Analytics`,
                 key: '0',
                 children: <Charts />,
               },

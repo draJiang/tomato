@@ -1,4 +1,5 @@
 import { WebsiteType } from '../enum';
+import { tomatosDataType } from '../types'
 import browser from 'webextension-polyfill'
 
 // let website = [
@@ -62,7 +63,7 @@ export const validate = (key: string) => {
 
 }
 
-export const getNewData = (oldData: { earn: Array<{ date: string, value: number }>, spend: Array<{ date: string, value: number }> }, n: number) => {
+export const getNewData = (oldData: tomatosDataType, n: number) => {
 
     let newData = { ...oldData }
     const today = new Date().toISOString().split('T')[0];
@@ -86,6 +87,8 @@ export const getNewData = (oldData: { earn: Array<{ date: string, value: number 
             newData.earn.push({ 'date': today, value: n })
         }
 
+        newData.earn = newData.earn.slice(-10)
+
     } else {
 
         let found = false
@@ -103,6 +106,8 @@ export const getNewData = (oldData: { earn: Array<{ date: string, value: number 
         if (!found) {
             newData.spend.push({ 'date': today, value: Math.abs(n) })
         }
+
+        newData.spend = newData.spend.slice(-10)
 
     }
 

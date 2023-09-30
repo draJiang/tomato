@@ -6,7 +6,7 @@ import ReactDOM from "react-dom";
 import styled from 'styled-components';
 import { MinusCircleOutlined, PlusOutlined, LoadingOutlined, CheckCircleTwoTone, WarningOutlined } from '@ant-design/icons';
 
-import { Form, Input, Radio, message, Button,Divider } from 'antd';
+import { Form, Input, Radio, message, Button, Divider } from 'antd';
 import type { RadioChangeEvent } from 'antd';
 import { WebsiteType } from '../enum'
 
@@ -26,7 +26,7 @@ let MyTitle = styled.h2`
 `;
 
 export function SettingsFrom() {
-    
+
     const [radioValue, setRadioValue] = useState(WebsiteType.White);
     const [form] = Form.useForm();
     const [isVerification, setVerification] = useState<'Unknown' | 'Y' | 'N' | 'Loading'>('Unknown')
@@ -39,19 +39,14 @@ export function SettingsFrom() {
 
             // 更新 input 文本框的默认值
             form.setFieldsValue({ licenseKey: items.licenseKey, websites: items.websites });
-
-            // setWebsites
-
             validate(items.licenseKey)
-
 
         })
 
 
         // 监听 background 发来的消息
         browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-            console.log('==============');
-            console.log(request);
+
             if (request.type === 'validate') {
 
                 if (request.data.valid) {
@@ -114,7 +109,7 @@ export function SettingsFrom() {
     const onRadioChange = (e: RadioChangeEvent) => {
         console.log('radio checked', e.target.value);
         setRadioValue(e.target.value);
-      };
+    };
 
     return (
 
@@ -138,7 +133,7 @@ export function SettingsFrom() {
                                 // justifyContent: 'end'
                             }}>
 
-                                Upgrade to Pro plan to add up to 50 websites
+                                Upgrade to Pro plan to add up to 100 websites
 
                                 <Button style={{
                                     paddingLeft: '2px',
@@ -165,7 +160,7 @@ export function SettingsFrom() {
                 </MySection>
 
                 <MyTitle>🪴Websites</MyTitle>
-                <MySection>
+                <MySection style={{ marginBottom: '20px' }}>
                     <div style={{ marginBottom: '20px', color: '#666' }}>
                         <p>👍🏼: Visiting this website will <strong>earn</strong> 🍅</p>
                         <p>🔒: Visiting this website will <strong>consume</strong> 🍅</p>
@@ -210,7 +205,7 @@ export function SettingsFrom() {
                                     <Button type="dashed"
                                         disabled={isVerification !== 'Y' && fields.length >= 5}
                                         onClick={() => add({ 'url': '', 'type': WebsiteType.White })} block icon={<PlusOutlined />}>
-                                        {isVerification !== 'Y' && fields.length >= 5 ? 'Upgrade to Pro plan to add up to 50 websites' : 'Add New Website'}
+                                        {isVerification !== 'Y' && fields.length >= 5 ? 'Upgrade to Pro plan to add up to 100 websites' : 'Add New Website'}
                                     </Button>
                                 </Form.Item>
                             </>
@@ -218,7 +213,15 @@ export function SettingsFrom() {
                     </Form.List>
                 </MySection>
 
-                <Form.Item>
+                <Form.Item style={{
+                    position: 'sticky',
+                    bottom: 0,
+                    padding: '10px 0',
+                    backgroundColor: '#fff',
+                    width: '100%',
+                    zIndex: 9,
+                    textAlign: 'right'
+                }}>
                     <Button type="primary" htmlType="submit">
                         Save
                     </Button>
