@@ -17,10 +17,6 @@ export function Charts() {
 
             console.log(result.data);
 
-            // 将数据转为组件需要的格式
-            // const earnData = result.data.earn.map((item: { date: string, value: number }) => { return { x: item.date, y: item.value } })
-            // const spendData = result.data.spend.map((item: { date: string, value: number }) => { return { x: item.date, y: item.value } })
-
             const newData = processOriginalData(result.data)
             console.log('newData:');
             console.log(newData);
@@ -33,7 +29,7 @@ export function Charts() {
     }, [])
 
     // type ArrayData = { date: string, value: number };
-    type tomatosDataKey = 'earn' | 'spend';
+    type tomatosDataKey = 'earn' | 'spent';
 
     const processOriginalData = (originalData: tomatosDataType) => {
         let resultData = [];
@@ -43,12 +39,16 @@ export function Charts() {
         // 最近 30 天的数据
         pastDate.setDate(currentDate.getDate() - 30);
 
-        const sections: tomatosDataKey[] = ['earn', 'spend'];
+        const sections: tomatosDataKey[] = ['spent', 'earn'];
 
 
         for (let section of sections) {
             let currentArray = originalData[section];
-            let tempData: { id: tomatosDataKey, color: string, data: { x: string, y: number }[] } = { id: section, color: section === 'earn' ? theme.token.colorPrimary : theme.color.colorYellow, data: [] };
+            let tempData: { id: tomatosDataKey, color: string, data: { x: string, y: number }[] } = {
+                id: section,
+                color: section === 'earn' ? theme.token.colorPrimary : theme.color.colorYellow,
+                data: []
+            };
 
             let loopDate = new Date(pastDate); // Create a new Date object for the loop
             for (let d = loopDate; d <= currentDate; d.setDate(d.getDate() + 1)) {
@@ -95,15 +95,26 @@ export function Charts() {
             {lineData.length > 0 ?
                 <ResponsiveLine
                     data={lineData!}
+                    yScale={{
+                        type: 'linear',
+                        // min: 'auto',
+                        // max: 'auto',
+                        stacked: false,
+                        // reverse: false
+                    }}
                     isInteractive={true}
                     enableArea={true}
                     enablePoints={false}
                     enableGridX={false}
                     useMesh={true}
-                    curve='basis'
+                    // curve='basis'
                     enableSlices='x'
-                    margin={{ top: 10, right: 20, bottom: 20, left: 20 }}
-                    axisLeft={null}
+                    margin={{ top: 10, right: 20, bottom: 20, left: 30 }}
+                    axisLeft={{
+                        tickValues: [10], 
+                        // 这里不同情况可能需要不同的格式化方式，以下仅为示例
+                        // format: d => `${d.toFixed(0)}`,  
+                      }}
                     axisBottom={{
                         tickSize: 0,
                         tickValues,

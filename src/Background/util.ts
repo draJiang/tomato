@@ -92,10 +92,10 @@ export const getNewData = (oldData: tomatosDataType, n: number) => {
     } else {
 
         let found = false
-        for (let i = 0; i < newData.spend.length; i++) {
+        for (let i = 0; i < newData.spent.length; i++) {
 
-            if (newData.spend[i].date === today) {
-                newData.spend[i].value += Math.abs(n)
+            if (newData.spent[i].date === today) {
+                newData.spent[i].value += Math.abs(n)
                 found = true
                 break
             }
@@ -104,10 +104,10 @@ export const getNewData = (oldData: tomatosDataType, n: number) => {
 
         //没有在旧数据中找到今天的日期，新增今日日期
         if (!found) {
-            newData.spend.push({ 'date': today, value: Math.abs(n) })
+            newData.spent.push({ 'date': today, value: Math.abs(n) })
         }
 
-        newData.spend = newData.spend.slice(-10)
+        newData.spent = newData.spent.slice(-10)
 
     }
 
