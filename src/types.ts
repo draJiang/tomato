@@ -13,4 +13,5 @@ export type tomatosType = {
 export type tomatosDataType = {
     earn: Array<{ date: string, value: number }>,
     spent: Array<{ date: string, value: number }>
+    spend?: Array<{ date: string, value: number }>
 }

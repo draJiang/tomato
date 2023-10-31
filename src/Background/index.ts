@@ -578,7 +578,27 @@ async function showMask(isShow: boolean) {
 async function updateTomato(n: number) {
 
 
-    let data = await browser.storage.local.get({ 'tomato': { 'total': 0, 'balance': 0 }, 'data': { 'earn': [], 'spend': [] } })
+    let data = await browser.storage.local.get({ 'tomato': { 'total': 0, 'balance': 0 }, 'data': { 'earn': [], 'spent': [] } })
+    
+    //  处理旧数据兼容问题
+    if ('spend' in data.data) {
+
+        if ('spent' in data.data) {
+
+
+            data.data.spent = data.data.spend.concat(data.data.spent);
+
+        } else {
+            data.data.spent = data.data.spend;
+
+        }
+
+        delete data.data.spend
+
+    }
+
+    console.log('data:');
+    console.log(data);
 
 
 
@@ -587,11 +607,9 @@ async function updateTomato(n: number) {
     if (n > 0) {
         //赚了番茄，总额+1
         data.tomato.total = data.tomato.total + n
-        // newData.earn.push({ 'date': today, value: n })
 
     } else {
         //消费了番茄
-        // newData.spend.push({ 'date': today, value: Math.abs(n) })
     }
 
     //设置余额
@@ -603,7 +621,6 @@ async function updateTomato(n: number) {
 
     console.log('newData:');
     console.log(newData);
-    
 
     //保存金额与数据统计
     browser.storage.local.set({ 'tomato': data.tomato, 'data': newData })

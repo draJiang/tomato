@@ -64,7 +64,9 @@ export const validate = (key: string) => {
 }
 
 export const getNewData = (oldData: tomatosDataType, n: number) => {
-
+    console.log('oldData:');
+    console.log(oldData);
+    
     let newData = { ...oldData }
     const today = new Date().toISOString().split('T')[0];
 

@@ -43,7 +43,23 @@ export function Charts() {
 
 
         for (let section of sections) {
-            let currentArray = originalData[section];
+
+            let currentArray
+            //  处理旧数据兼容问题
+            if ('spend' in originalData && section in originalData && section === 'spent') {
+
+                currentArray = originalData['spend']?.concat(originalData[section])
+
+            } else if (section in originalData) {
+                currentArray = originalData[section];
+            } else if ('spend' in originalData) {
+                currentArray = originalData['spend'];
+            }
+            else {
+                continue
+            }
+
+
             let tempData: { id: tomatosDataKey, color: string, data: { x: string, y: number }[] } = {
                 id: section,
                 color: section === 'earn' ? theme.token.colorPrimary : theme.color.colorYellow,
@@ -54,7 +70,7 @@ export function Charts() {
             for (let d = loopDate; d <= currentDate; d.setDate(d.getDate() + 1)) {
                 let formatDate: string = d.toISOString().slice(0, 10);
 
-                let findData = currentArray.find((item: { date: string, value: number }) => item.date === formatDate);
+                let findData = currentArray!.find((item: { date: string, value: number }) => item.date === formatDate);
 
                 let value: number = findData ? findData.value : 0;
 
@@ -111,10 +127,10 @@ export function Charts() {
                     enableSlices='x'
                     margin={{ top: 10, right: 20, bottom: 20, left: 30 }}
                     axisLeft={{
-                        tickValues: [10], 
+                        tickValues: [10],
                         // 这里不同情况可能需要不同的格式化方式，以下仅为示例
                         // format: d => `${d.toFixed(0)}`,  
-                      }}
+                    }}
                     axisBottom={{
                         tickSize: 0,
                         tickValues,
