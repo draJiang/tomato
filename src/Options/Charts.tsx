@@ -127,7 +127,7 @@ export function Charts() {
                     enableSlices='x'
                     margin={{ top: 10, right: 20, bottom: 20, left: 30 }}
                     axisLeft={{
-                        tickValues: [10],
+                        tickValues: [4],
                         // 这里不同情况可能需要不同的格式化方式，以下仅为示例
                         // format: d => `${d.toFixed(0)}`,  
                     }}

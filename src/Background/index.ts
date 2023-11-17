@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill'
 import { createParser, ParsedEvent, ReconnectInterval } from 'eventsource-parser'
 
-import icon from '../assets/icon128.png'
+import Icon from '../assets/icon128.png'
 
 import { checkWebsite } from './util'
 import { millisecondsToTime } from '../utils'
@@ -579,7 +579,7 @@ async function updateTomato(n: number) {
 
 
     let data = await browser.storage.local.get({ 'tomato': { 'total': 0, 'balance': 0 }, 'data': { 'earn': [], 'spent': [] } })
-    
+
     //  处理旧数据兼容问题
     if ('spend' in data.data) {
 
@@ -640,7 +640,13 @@ async function updateTomato(n: number) {
     }
 
 
-
-
-
+    // browser.notifications.create(
+    //     'notification-id', // 通知的唯一标识符
+    //     {
+    //         type: 'basic', // 通知类型
+    //         iconUrl: Icon, // 展示的图标URL
+    //         title: '通知的标题', // 通知的标题
+    //         message: '通知的内容' // 通知的内容
+    //     }
+    // );
 }

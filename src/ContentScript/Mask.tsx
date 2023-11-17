@@ -213,6 +213,15 @@ export function Mask(props: any) {
                                                     marginBottom: '1em'
                                                 }}
                                                 onClick={handleStopTomatosBtnClick}>Stop tomato</Button>
+
+                                            <Button
+                                                type='text'
+                                                style={{
+                                                    marginBottom: '1em'
+                                                }}
+                                                onClick={() => setStatus((prevStatus: showMaskType) => {
+                                                    return { ...prevStatus, showMask: false }
+                                                })}>Unblock</Button>
                                         </div>
 
                                     </>
